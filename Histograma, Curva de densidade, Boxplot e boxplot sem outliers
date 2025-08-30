@@ -1,0 +1,50 @@
+    
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np # Importado para lidar com possíveis zeros
+
+# Carregar o conjunto de dados
+file_path = 'C:/Users/noobt/Downloads/Data analisys/testedataset/worldometer_data.csv'
+df = pd.read_csv(file_path)
+
+# Escala logarítmica não funciona com valores de 0 ou negativos.
+df['TotalCases_log'] = df['TotalCases'].replace(0, 1) # Substituindo 0 por 1 para o log funcionar
+
+# Definir a coluna para análise
+column_to_plot = 'TotalCases_log'
+
+# Configurar a paleta de cores e o estilo
+sns.set_theme(style="whitegrid", palette="magma")
+
+# Criar a figura com 4 subplots
+fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+fig.suptitle('Análise de Distribuição (Escala Logarítmica) para Total de Casos', fontsize=20, weight='bold')
+
+# 1. Histograma com escala logarítmica
+sns.histplot(data=df, x=column_to_plot, ax=axes[0, 0], log_scale=True)
+axes[0, 0].set_title('1. Histograma (Escala Log)', fontsize=14)
+axes[0, 0].set_xlabel('Número Total de Casos (log)')
+axes[0, 0].set_ylabel('Frequência (Nº de Países)')
+
+# 2. Curva de Densidade (KDE) com escala logarítmica
+sns.kdeplot(data=df, x=column_to_plot, ax=axes[0, 1], log_scale=True, fill=True)
+axes[0, 1].set_title('2. Curva de Densidade (KDE) (Escala Log)', fontsize=14)
+axes[0, 1].set_xlabel('Número Total de Casos (log)')
+axes[0, 1].set_ylabel('Densidade')
+
+# 3. Boxplot com escala logarítmica (com outliers)
+sns.boxplot(data=df, x=column_to_plot, ax=axes[1, 0])
+axes[1, 0].set_xscale('log') # Outra forma de aplicar a escala
+axes[1, 0].set_title('3. Boxplot (Escala Log)', fontsize=14)
+axes[1, 0].set_xlabel('Número Total de Casos (log)')
+
+# 4. Boxplot sem outliers
+sns.boxplot(data=df, x=column_to_plot, ax=axes[1, 1], showfliers=False)
+axes[1, 1].set_xscale('log')
+axes[1, 1].set_title('4. Boxplot sem Outliers (Escala Log)', fontsize=14)
+axes[1, 1].set_xlabel('Número Total de Casos (log)')
+
+
+plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+plt.show()
